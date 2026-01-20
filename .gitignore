@@ -11,3 +11,8 @@ build/
 
 # Ignore other common artifacts
 .DS_Store
+*.log
+*.mp4
+demo_capture.mp4
+demo_log.jsonl
+runs/

@@ -40,6 +40,7 @@ Traditional Approach:          RFSN Approach:
 ## ✨ Features
 
 ### Core Capabilities
+
 - 🎯 **Discrete State Machine** - 11 states for complex manipulation tasks (pick, place, throw)
 - 🛡️ **Safety First** - Automatic recovery from collisions, torque limits, and constraint violations
 - 📚 **Profile Library** - 43 pre-tuned MPC parameter profiles (3-5 variants per state)
@@ -50,6 +51,7 @@ Traditional Approach:          RFSN Approach:
 - 🔌 **Zero Invasive** - Pure additive integration, baseline behavior preserved when disabled
 
 ### v8 NEW: Advanced Control Modes
+
 - 🎯 **Task-Space MPC** - Direct end-effector trajectory optimization (position + orientation)
 - 🤝 **Impedance Control** - Force-based compliant manipulation for soft grasps and gentle placement
 - 🔄 **Multi-Modal Control** - Switch between joint-space MPC, task-space MPC, impedance, or PD control
@@ -88,11 +90,11 @@ python -m eval.run_benchmark --mode rfsn --episodes 10
 python -m eval.run_benchmark --mode rfsn_learning --episodes 50
 ```
 
-### Interactive Demo
+### Quick Demo
 
 ```bash
-# Run a live demonstration
-python example_rfsn_demo.py --mode rfsn --steps 3000
+# Check that RECOVER is forced and poison list grows
+python examples/example_rfsn_demo.py --mode rfsn_learning --steps 5000
 ```
 
 ### View Results
@@ -103,6 +105,7 @@ python -m eval.report runs/<timestamp>
 ```
 
 **Example Output:**
+
 ```
 ======================================================================
 EVALUATION METRICS
@@ -153,6 +156,7 @@ packages used for evaluation, plotting, and interactive demos (such as
 ```bash
 pip install -r requirements-extras.txt
 ```
+
 ```
 
 ### Verify Installation
@@ -163,6 +167,7 @@ python test_rfsn_suite.py
 ```
 
 Expected output:
+
 ```
 ✓ MPC Only Mode                    - PASSED
 ✓ RFSN Mode                        - PASSED  
@@ -239,31 +244,27 @@ ANY_STATE ──[violation]──> RECOVER ──[timeout]──> FAIL
 ```
 RFSN-ROBOT/
 ├── rfsn/                          # Core RFSN modules
-│   ├── obs_packet.py              # Observation dataclass
-│   ├── decision.py                # Decision dataclass with MPC knobs
-│   ├── state_machine.py           # 11-state discrete machine
-│   ├── profiles.py                # 43 safe parameter profiles
-│   ├── learner.py                 # UCB bandit with rollback
-│   ├── safety.py                  # Safety enforcement & poison list
-│   ├── logger.py                  # Episode and event logging
-│   ├── harness.py                 # Main integration wrapper
-│   └── mujoco_utils.py            # MuJoCo state extraction
+│   ├── ...                        # (internal modules)
+│   └── harness.py                 # Main integration wrapper
 │
 ├── eval/                          # Evaluation framework
-│   ├── run_benchmark.py           # Run N episodes in 3 modes
-│   ├── metrics.py                 # Compute success/safety metrics
-│   └── report.py                  # Generate summary reports
+│   └── ...
+│
+├── examples/                      # Usage examples
+│   └── example_rfsn_demo.py       # Simple integration example
+│
+├── demos/                         # Task-specific demos
+│   ├── pick_and_throw.py
+│   └── demo_impedance.py
+│
+├── baselines/                     # Original baselines
+│   ├── panda_mpc_inverse_dynamics.py
+│   └── fast_mpc.py
 │
 ├── runs/                          # Auto-generated benchmark data
-│   └── <timestamp>/
-│       ├── episodes.csv           # Episode summaries
-│       └── events.jsonl           # Detailed event logs
-│
-├── example_rfsn_demo.py           # Simple integration example
-├── test_rfsn_suite.py             # Comprehensive test suite
-├── panda_table_cube.xml           # MuJoCo model definition
-├── panda_mpc_inverse_dynamics.py  # Original MPC baseline
-└── fast_mpc.py                    # MPC solver library
+├── docs/                          # Documentation archive
+├── run_demo.py                    # Main "One-Button" Demo
+└── panda_table_cube.xml           # MuJoCo model definition
 ```
 
 ## 🎓 Usage Examples
@@ -322,10 +323,10 @@ profiles.add_variant("LIFT", "aggressive", custom_profile)
 
 ## 📚 Documentation
 
-- **[Quick Start Guide](QUICKSTART.md)** - Get up and running in 5 minutes
-- **[Full Documentation](README_RFSN.md)** - Complete technical reference
-- **[Integration Report](INTEGRATION_REPORT.md)** - Implementation details and test results
-- **[Build Status](BUILD_STATUS.md)** - Setup and troubleshooting guide
+- **[Quick Start Guide](docs/archive/QUICKSTART.md)** - Get up and running in 5 minutes
+- **[Full Documentation](docs/archive/README_RFSN.md)** - Complete technical reference
+- **[Integration Report](docs/archive/INTEGRATION_REPORT.md)** - Implementation details and test results
+- **[Build Status](docs/archive/BUILD_STATUS.md)** - Setup and troubleshooting guide
 
 ## 🔬 Research & Validation
 
@@ -356,6 +357,7 @@ profiles.add_variant("LIFT", "aggressive", custom_profile)
 4. **Rollback**: Revert to last known-good profile after 2 severe events in 5 uses
 
 **Score Function:**
+
 ```
 score = +1.0  (successful completion)
        -10.0  (collision)
